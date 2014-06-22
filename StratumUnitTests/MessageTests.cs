@@ -7,7 +7,7 @@ namespace StratumUnitTests
     [TestClass]
     public class MessageTests
     {
-        [TestMethod]
+        [TestMethod, TestCategory("Messages")]
         public void TestBaseMessage()
         {
             var msg = new BaseMessage(999);
@@ -17,7 +17,7 @@ namespace StratumUnitTests
             Assert.AreEqual(msg.FailedRequest, "");
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Messages")]
         public void TestBaseMessageParse()
         {
             var str = "{\"id\": 999, \"method\": \"blockchain.headers.subscribe\", \"params\": []}";
@@ -26,7 +26,7 @@ namespace StratumUnitTests
             Assert.AreEqual(msg.Id, 999);
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Messages")]
         public void TestBaseMessageParseFailed()
         {
             string str = "{\"request\": \"Lorem ipsum dolor sit amet, consectetuer adipiscing elit.\", " +
@@ -38,7 +38,7 @@ namespace StratumUnitTests
             Assert.AreEqual(msg.FailedRequest, "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.");
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Messages")]
         public void TestCallMessageParse()
         {
             String str = "{\"id\": 0, \"method\": \"blockchain.headers.subscribe\", \"params\": []}";
@@ -47,7 +47,7 @@ namespace StratumUnitTests
             Assert.AreEqual(call.Method, "blockchain.headers.subscribe");
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Messages")]
         public void TestCallMessage()
         {
             CallMessage call = new CallMessage(1L, "blockchain.address.listunspent",
@@ -59,7 +59,7 @@ namespace StratumUnitTests
             //        "\"params\":[\"npF3ApeWwMS8kwXJyybPZ76vNbv5txVjDf\"]}", call.ToString());
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Messages")]
         public void TestResultMessage()
         {
             String resultString = "{\"id\": 1, \"result\": [{" +

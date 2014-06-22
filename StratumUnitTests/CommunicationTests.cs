@@ -8,7 +8,7 @@ namespace StratumUnitTests
     [TestClass]
     public class CommunicationTests
     {
-        [TestMethod]
+        [TestMethod, TestCategory("Live Communication")]
         public void TestCallCommand()
         {
             var client = new StratumClient("test.coinomi.com", 15001);
@@ -23,7 +23,7 @@ namespace StratumUnitTests
             Assert.AreEqual(msg.Result[0].Value<int>("height"), 260144);
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Live Communication")]
         public void TestSubscribeCommand()
         {
             var tcs = new System.Threading.Tasks.TaskCompletionSource<ResultMessage>();
