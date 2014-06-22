@@ -57,6 +57,10 @@ namespace StratumWP
         {
             try { socket.Close(); }
             catch { }
+
+            foreach (var tcs in callers.Values)
+                tcs.SetCanceled();
+            subscribes.Clear();
         }
 
         private void sendToServer(string str)
