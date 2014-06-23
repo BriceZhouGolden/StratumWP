@@ -122,14 +122,13 @@ namespace StratumWP
 
         private void handleMessage(ResultMessage result)
         {
-            if(callers.ContainsKey(result.Id))
+            if (callers.ContainsKey(result.Id))
             {
                 callers[result.Id].SetResult(result);
                 callers.Remove(result.Id);
             }
-            else if(subscribes.ContainsKey(result.Id))
-                try { subscribes[result.Id](result); }
-                catch { }
+            else if (subscribes.ContainsKey(result.Id))
+                Task.Run(() => subscribes[result.Id](result));
         }
     }
 
