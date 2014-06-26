@@ -9,7 +9,7 @@ namespace StratumWP.Messages
     {
         public long Id
         {
-            get { return (long)base["id"]; }
+            get { return (long?)base["id"] ?? -1; }
             set { base["id"] = value; }
         }
 
