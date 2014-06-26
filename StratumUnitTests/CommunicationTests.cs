@@ -2,21 +2,27 @@
 using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
 using StratumWP;
 using StratumWP.Messages;
+using System.Threading.Tasks;
 
 namespace StratumUnitTests
 {
     [TestClass]
     public class CommunicationTests
     {
-        [TestMethod, TestCategory("Live Communication")]
-        public void TestCallCommand()
+        StratumClient client;
+
+        [TestInitialize]
+        public async Task Prepare()
         {
-            var client = new StratumClient(new System.Net.DnsEndPoint("test.coinomi.com", 15001));
-            client.ConnectAsync().Wait();
-            var callTask = client.Call(new CallMessage("blockchain.address.get_history",
+            client = new StratumClient(new System.Net.DnsEndPoint("test.coinomi.com", 15001));
+            await client.ConnectAsync();
+        }
+
+        [TestMethod, TestCategory("Live Communication")]
+        public async Task TestCallCommand()
+        {
+            var msg = await client.Call(new CallMessage("blockchain.address.get_history",
                 new[] { "mrx4EmF6zHXky3zDoeJ1K7KvYcuNn8Mmc4" }));
-            callTask.Wait();
-            var msg = callTask.Result;
 
             Assert.AreEqual(msg.Result[0].Value<string>("tx_hash"),
                 "3aa2a5a9825ca767e092bcc19487aa13969eeb217fd0fba8492543bbb8c30954");
@@ -24,33 +30,26 @@ namespace StratumUnitTests
         }
 
         [TestMethod, TestCategory("Live Communication")]
-        public void TestCallCommandFail()
+        public async Task TestCallCommandFail()
         {
-            var client = new StratumClient(new System.Net.DnsEndPoint("test.coinomi.com", 15001));
-            client.ConnectAsync().Wait();
-            var callTask = client.Call(new CallMessage("blockchain.dummy", new[] { "" }));
-            callTask.Wait();
-            var msg = callTask.Result;
+            var msg = await client.Call(new CallMessage("blockchain.dummy", new[] { "" }));
 
             Assert.IsTrue(msg.ErrorOccured);
             Assert.IsTrue(msg.Error.StartsWith("unknown method"));
         }
 
         [TestMethod, TestCategory("Live Communication")]
-        public void TestSubscribeCommand()
+        public async Task TestSubscribeCommand()
         {
-            var tcs = new System.Threading.Tasks.TaskCompletionSource<ResultMessage>();
+            var tcs = new TaskCompletionSource<ResultMessage>();
 
-            var client = new StratumClient(new System.Net.DnsEndPoint("test.coinomi.com", 15001));
-            client.ConnectAsync().Wait();
             client.Subscibe(new CallMessage("blockchain.address.get_history",
                 new[] { "mrx4EmF6zHXky3zDoeJ1K7KvYcuNn8Mmc4" }), r =>
                 {
                     tcs.SetResult(r);
                 });
 
-            tcs.Task.Wait();
-            var msg = tcs.Task.Result;
+            var msg = await tcs.Task;
 
             Assert.AreEqual(msg.Result[0].Value<string>("tx_hash"),
                 "3aa2a5a9825ca767e092bcc19487aa13969eeb217fd0fba8492543bbb8c30954");
