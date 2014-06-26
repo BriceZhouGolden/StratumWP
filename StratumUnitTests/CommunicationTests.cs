@@ -24,6 +24,19 @@ namespace StratumUnitTests
         }
 
         [TestMethod, TestCategory("Live Communication")]
+        public void TestCallCommandFail()
+        {
+            var client = new StratumClient(new System.Net.DnsEndPoint("test.coinomi.com", 15001));
+            client.ConnectAsync().Wait();
+            var callTask = client.Call(new CallMessage("blockchain.dummy", new[] { "" }));
+            callTask.Wait();
+            var msg = callTask.Result;
+
+            Assert.IsTrue(msg.ErrorOccured);
+            Assert.IsTrue(msg.Error.StartsWith("unknown method"));
+        }
+
+        [TestMethod, TestCategory("Live Communication")]
         public void TestSubscribeCommand()
         {
             var tcs = new System.Threading.Tasks.TaskCompletionSource<ResultMessage>();

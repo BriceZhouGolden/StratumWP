@@ -111,8 +111,7 @@ namespace StratumWP
                     var resp = Encoding.UTF8.GetString(recBuffer, 0, ea.BytesTransferred);
                     var msg = new ResultMessage(resp);
 
-                    if (!msg.ErrorOccured)
-                        handleMessage(msg);
+                    handleMessage(msg);
                 }
 
                 recieveMessage();
