@@ -11,7 +11,7 @@ namespace StratumUnitTests
         [TestMethod, TestCategory("Live Communication")]
         public void TestCallCommand()
         {
-            var client = new StratumClient("test.coinomi.com", 15001);
+            var client = new StratumClient(new System.Net.DnsEndPoint("test.coinomi.com", 15001));
             client.ConnectAsync().Wait();
             var callTask = client.Call(new CallMessage("blockchain.address.get_history",
                 new[] { "mrx4EmF6zHXky3zDoeJ1K7KvYcuNn8Mmc4" }));
@@ -28,7 +28,7 @@ namespace StratumUnitTests
         {
             var tcs = new System.Threading.Tasks.TaskCompletionSource<ResultMessage>();
 
-            var client = new StratumClient("test.coinomi.com", 15001);
+            var client = new StratumClient(new System.Net.DnsEndPoint("test.coinomi.com", 15001));
             client.ConnectAsync().Wait();
             client.Subscibe(new CallMessage("blockchain.address.get_history",
                 new[] { "mrx4EmF6zHXky3zDoeJ1K7KvYcuNn8Mmc4" }), r =>

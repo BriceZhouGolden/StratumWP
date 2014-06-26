@@ -1,6 +1,7 @@
 ﻿using StratumWP.Messages;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -10,8 +11,7 @@ namespace StratumWP
 {
     public class StratumClient
     {
-        private string host;
-        private int port;
+        private DnsEndPoint[] servers;
 
         private Socket socket;
 
@@ -22,10 +22,12 @@ namespace StratumWP
 
         private byte[] recBuffer;
 
-        public StratumClient(string host, int port)
+        public StratumClient(IEnumerable<DnsEndPoint> servers)
+            : this(servers.ToArray()) { }
+
+        public StratumClient(params DnsEndPoint[] servers)
         {
-            this.host = host;
-            this.port = port;
+            this.servers = servers;
 
             this.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -39,7 +41,8 @@ namespace StratumWP
         {
             var tcs = new TaskCompletionSource<SocketError>();
 
-            var connectArgs = new SocketAsyncEventArgs() { RemoteEndPoint = new DnsEndPoint(host, port) };
+            // TODO use random, exponentially backoff from failed connections
+            var connectArgs = new SocketAsyncEventArgs() { RemoteEndPoint = servers[0] };
             EventHandler<SocketAsyncEventArgs> completed = (s, ea) =>
             {
                 recieveMessage();
